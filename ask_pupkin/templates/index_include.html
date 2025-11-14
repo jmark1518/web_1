@@ -1,0 +1,19 @@
+<h2>
+                New Questions
+                <span><a href="#">Hot Questions</a></span>
+            </h2>
+            <div class="questions-list">
+	{% for question in questions %}
+                <div class="question">
+                    <div class="avatar"><img src="../public/images/anon.png"></div>
+                    <div class="like">4<button class="image-button"></button></div>
+                    <div class="text">
+                        <a href="">{{ question.title }}</a>
+                        <p>{{ question.text }} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facere sunt reiciendis iure dolor ex, cumque laborum quibusdam repudiandae distinctio ipsum rem aut. Fuga odio nam assumenda amet. Nam, eaque eos.</p>
+                        <span><a href="#">answers (4)</a> Tags:<a href="#">tag 1</a> <a href="#">tag 2</a> </span>
+                       
+			</div>
+                </div>
+	{%endfor%}
+
+            </div>

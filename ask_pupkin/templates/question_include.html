@@ -1,0 +1,28 @@
+<div class="main-question">
+                <div class="avatar"><img src="images/anon.png"></div>
+                <div class="like">4<button class="image-button"></button></div>
+                <div class="text">
+                    <h2>How to build a moon park ?</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facere sunt reiciendis iure dolor ex, cumque laborum quibusdam repudiandae distinctio ipsum rem aut. Fuga odio nam assumenda amet. Nam, eaque eos.</p>
+                    <span><a href="#">answers (4)</a> Tags:<a href="#">tag 1</a> <a href="#">tag 2</a> </span>
+                </div>
+            </div>
+{%for answer in answers%}	
+            <div class="answer">
+                <div class="avatar"><img src="images/anon.png"></div>
+                    <div class="like">4<button class="image-button"></button></div>
+                    <div class="text">
+                        <p>Fuga odio nam assumenda amet. Nam, eaque eos.</p>
+                        <form>
+                            <label>
+                                <input type="checkbox">
+                                    Это реально круто
+                            </label>
+                        </form>
+                    </div>
+            </div>
+{%endfor%}
+            <form>
+                <input class="user_answer" type="text" id="answer" placeholder="Поделитесь">
+            </form>
+            <button class="send_answer">Answer</button>
