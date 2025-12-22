@@ -1,8 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
 
 from django.http import HttpResponse
+from .models import Question, Tag, User
+from django.core.paginator import Paginator
+
 
 def hello_view(request):
     return HttpResponse("Привет, мир!")
@@ -27,8 +30,13 @@ def main_page(request):
             'id': i,
             'text': 'text ' + str(i),
         })
+    paginator=Paginator(questions, per_page=5)
+    page_number = request.GET.get('page')
+    question_page=paginator.get_page(page_number)
+
+
     # Передаём список вопросов в шаблон
-    return render(request, 'index.html', {'questions': questions})
+    return render(request, 'index.html', {'questions': question_page})
 
 def hot_questions(request):
     questions = []
@@ -38,13 +46,22 @@ def hot_questions(request):
             'id': i,
             'text': 'text ' + str(i),
         })
+    paginator=Paginator(questions, per_page=5)
+    page_number = request.GET.get('page')
+    question_page=paginator.get_page(page_number)
+
     # Передаём список вопросов в шаблон
-    return render(request, 'hot.html', {'questions': questions})
+    return render(request, 'hot.html', {'questions': question_page})
 
-def tag_questions(request):
-    return HttpResponse("cписок вопросов по тэгу")
 
-def one_question(request):
+def tag_questions(request, tag_name):  # ← tag_name из URL!
+    questions = Question.objects.filter(tags__name=tag_name)
+    paginator = Paginator(questions, 2)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+    return render(request, 'index.html', {'page': page, 'title': 'Тег: {tag_name}'})
+
+def one_question(request, question_id):
     answers = []
     for i in range(1, 3):
         answers.append({
@@ -52,8 +69,9 @@ def one_question(request):
             'id': i,
             'text': 'text ' + str(i),
         })
+    question = get_object_or_404(Question, id=question_id)
     # Передаём список вопросов в шаблон
-    return render(request, 'question.html', {'answers': answers})
+    return render(request, 'question.html', {'question': question, 'answers' : answers})
 
 def login(request):
     return render(request, 'login.html')

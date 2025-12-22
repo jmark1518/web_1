@@ -1,11 +1,11 @@
 <h2>
                 New Questions
-                <span><a href="#">Hot Questions</a></span>
+                <span><a href="/hot">Hot Questions</a></span>
             </h2>
             <div class="questions-list">
 	{% for question in questions %}
                 <div class="question">
-                    <div class="avatar"><img src="../public/images/anon.png"></div>
+                    <div class="avatar"><img src="static/img/anon.png"></div>
                     <div class="like">4<button class="image-button"></button></div>
                     <div class="text">
                         <a href="">{{ question.title }}</a>
@@ -16,4 +16,13 @@
                 </div>
 	{%endfor%}
 
+	<div class = "pagination">
+	{% if questions.has_previous %}
+	    <a href="?page={{ questions.previous_page_number }}">  {{ questions.previous_page_number}}<a>
+	{% endif %}
+ 	    <a>{{ questions.number}}<a>
+	{% if questions.has_next %}
+	    <a href="?page={{ questions.next_page_number }}">  {{ questions.next_page_number}}<a>
+	{% endif %}
+	</div>
             </div>
