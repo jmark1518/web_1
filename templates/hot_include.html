@@ -1,0 +1,30 @@
+<h2>
+                Hot Questions
+            </h2>
+            <div class="questions-list">
+        {% for question in questions %}
+                <div class="question">
+                    <div class="avatar"><img src="../static/img/anon.png"></div>
+                    <div class="like">4<button class="image-button"></button></div>
+                    <div class="text">
+                        <a href="">{{ question.title }}</a>
+                        <p>{{ question.text }} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facere sunt reiciendis iure dolor ex, cumque laborum quibusdam repudiandae distinctio ipsum rem aut. Fuga odio nam assumenda amet. Nam, eaque eos.</p>
+                        <span><a href="#">answers (4)</a> Tags:<a href="#">tag 1</a> <a href="#">tag 2</a> </span>
+
+                        </div>
+                </div>
+        {%endfor%}
+
+
+	<div class = "pagination">
+        {% if questions.has_previous %}
+            <a href="?page={{ questions.previous_page_number }}">  {{ questions.previous_page_number}}<a>
+        {% endif %}
+            <a>{{ questions.number}}<a>
+        {% if questions.has_next %}
+            <a href="?page={{ questions.next_page_number }}">  {{ questions.next_page_number}}<a>
+        {% endif %}
+        </div>
+
+            </div>
+
