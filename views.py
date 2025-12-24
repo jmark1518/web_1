@@ -23,13 +23,7 @@ def base(request):
 
 
 def main_page(request):
-    questions = []
-    for i in range(1, 30):
-        questions.append({
-            'title': 'title ' + str(i),
-            'id': i,
-            'text': 'text ' + str(i),
-        })
+    questions = Question.objects.all().order_by('-created_at')
     paginator=Paginator(questions, per_page=5)
     page_number = request.GET.get('page')
     question_page=paginator.get_page(page_number)
@@ -39,13 +33,7 @@ def main_page(request):
     return render(request, 'index.html', {'questions': question_page})
 
 def hot_questions(request):
-    questions = []
-    for i in range(1, 30):
-        questions.append({
-            'title': 'title ' + str(i),
-            'id': i,
-            'text': 'text ' + str(i),
-        })
+    questions = Question.objects.hot()
     paginator=Paginator(questions, per_page=5)
     page_number = request.GET.get('page')
     question_page=paginator.get_page(page_number)
@@ -54,7 +42,7 @@ def hot_questions(request):
     return render(request, 'hot.html', {'questions': question_page})
 
 
-def tag_questions(request, tag_name):  # ← tag_name из URL!
+def tag_questions(request, tag_name):
     questions = Question.objects.filter(tags__name=tag_name)
     paginator = Paginator(questions, 2)
     page_number = request.GET.get('page')

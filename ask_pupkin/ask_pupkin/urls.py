@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
+from django.urls import include
 
 from app.views import hello_view, bye_view, hello_template_view, base, main_page, hot_questions, tag_questions, one_question, login, signup, create_question, profile
 
@@ -25,16 +25,11 @@ urlpatterns = [
     path('hello/', hello_view),
     path('bye/', bye_view),
     path('hello-template/', hello_template_view),
-
     path('base/', base, name='base'),
-
-    path('', main_page, name='main'),
-    path('hot/', hot_questions, name='hot'),
-    path('tag/blablabla/', tag_questions, name='tag'),
-    path('question/35/', one_question, name='question'),
     path('login/', login, name='login'),
     path('signup/', signup, name='signup'),
     path('ask/', create_question, name='new_q'),
     path('profile/', profile, name='profile'),
+    path('', include('app.urls')),
 ]
 
