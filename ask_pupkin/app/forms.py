@@ -29,8 +29,9 @@ class ProfileEditForm(forms.ModelForm):
     
     class Meta:
         model = Profile
-        fields = ['avatar']
+        fields = ['nick', 'avatar']
         widgets = {
+            'nick': forms.TextInput(attrs={'class': 'form-control'}),
             'avatar': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
     
@@ -49,8 +50,9 @@ class QuestionForm(forms.ModelForm):
     
     class Meta:
         model = Question
-        fields = ['text']
+        fields = ['title', 'text']
         widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
             'text': forms.Textarea(attrs={'class': 'form-control', 'rows': 10}),
         }
 

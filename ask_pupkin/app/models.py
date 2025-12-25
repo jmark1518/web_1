@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Case, When, IntegerField, Sum
 
 
 from django.db.models.signals import post_save
@@ -17,6 +17,9 @@ class Tag(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    nick = models.CharField(max_length=100, blank=True)
+
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     
     def __str__(self):
@@ -33,6 +36,7 @@ class QuestionManager(models.Manager):
         ).order_by('-likes_count', '-created_at')
 
 class Question(models.Model):
+    title = models.CharField(max_length=255)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='questions')
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -44,7 +48,7 @@ class Question(models.Model):
         return f"/question/{self.id}/"
     
     def __str__(self):
-        return self.text[:50]
+        return self.title[:50]
 
 class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answer')
@@ -61,6 +65,8 @@ class QuestionLike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     
+    is_like = models.BooleanField(default=False)
+
     class Meta:
         unique_together = ('question', 'user')
 
@@ -83,5 +89,11 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
-    if hasattr(instance, 'profile'):
+    try:
         instance.profile.save()
+    except Profile.DoesNotExist:
+        Profile.objects.create(user=instance)
+
+
+#    if hasattr(instance, 'profile'):
+#        instance.profile.save()

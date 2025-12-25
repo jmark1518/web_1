@@ -1,12 +1,15 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Question, Tag, User, Answer
+from .models import Question, Tag, User, Answer, QuestionLike, AnswerLike
 from django.core.paginator import Paginator
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import LoginForm, SignUpForm, ProfileEditForm, QuestionForm, AnswerForm
 from django.urls import reverse
+
+from django.http import JsonResponse
+import json
 
 def hello_view(request):
     return HttpResponse("Привет, мир!")
@@ -46,6 +49,18 @@ def one_question(request, question_id):
     question = get_object_or_404(Question, id=question_id)
     answers = question.answer.all().order_by('-created_at')
     
+
+    likes_count = QuestionLike.objects.filter(question=question, is_like=True).count()
+    dislikes_count = QuestionLike.objects.filter(question=question, is_like=False).count()
+    user_like = None
+    if request.user.is_authenticated:
+        try:
+            user_like = QuestionLike.objects.get(question=question, user=request.user)
+        except QuestionLike.DoesNotExist:
+            pass
+
+
+
     if request.method == 'POST' and request.user.is_authenticated:
         form = AnswerForm(request.POST)
         if form.is_valid():
@@ -60,7 +75,10 @@ def one_question(request, question_id):
     return render(request, 'question.html', {
         'question': question,
         'answers': answers,
-        'form': form
+        'form': form,
+        'likes_count': likes_count,
+        'dislikes_count': dislikes_count,
+        'user_like': user_like,
     })
 
 def login_view(request):
@@ -138,3 +156,80 @@ def create_question(request):
         form = QuestionForm()
     
     return render(request, 'ask.html', {'form': form})
+
+
+
+
+
+
+
+from django.http import JsonResponse
+import json
+
+@login_required
+def like_question(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            question_id = data.get('question_id')
+            like_type = data.get('type')
+            
+            question = Question.objects.get(id=question_id)
+            
+            if like_type not in ['like', 'dislike']:
+                return JsonResponse({'error': 'Неверный тип'}, status=400)
+            
+            is_like = like_type == 'like'
+            
+            like, created = QuestionLike.objects.get_or_create(
+                question=question,
+                user=request.user,
+                defaults={'is_like': is_like}
+            )
+            
+            if not created:
+                if like.is_like == is_like:
+                    like.delete()
+                else:
+                    like.is_like = is_like
+                    like.save()
+            
+            likes_count = QuestionLike.objects.filter(question=question, is_like=True).count()
+            dislikes_count = QuestionLike.objects.filter(question=question, is_like=False).count()
+            rating = likes_count - dislikes_count
+            
+            return JsonResponse({
+                'likes': likes_count,
+                'dislikes': dislikes_count,
+                'rating': rating
+            })
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Метод не разрешен'}, status=405)
+
+@login_required
+def mark_correct_answer(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            question_id = data.get('question_id')
+            answer_id = data.get('answer_id')
+            
+            question = Question.objects.get(id=question_id)
+            answer = Answer.objects.get(id=answer_id)
+            
+            if question.author != request.user:
+                return JsonResponse({'error': 'Только автор вопроса может отмечать правильный ответ'}, status=403)
+            
+            if answer.question != question:
+                return JsonResponse({'error': 'Ответ не принадлежит этому вопросу'}, status=400)
+            
+            Answer.objects.filter(question=question).update(is_correct=False)
+            
+            answer.is_correct = True
+            answer.save()
+            
+            return JsonResponse({'success': True, 'answer_id': answer_id})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': 'Метод не разрешен'}, status=405)

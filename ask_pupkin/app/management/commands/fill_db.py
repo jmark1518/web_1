@@ -21,7 +21,7 @@ class Command(BaseCommand):
         users = []
         for i in range(ratio):
             user = User.objects.create_user(username=f'user{i}', email=f'user{i}@mail.ru')
-            Profile.objects.create(user=user)
+#            Profile.objects.create(user=user)
             users.append(user)
         self.stdout.write(f'Users: {ratio}')
         
@@ -37,6 +37,7 @@ class Command(BaseCommand):
         for i in range(ratio * 10):
             q = Question.objects.create(
                 author=random.choice(users),
+                title=f'Как изучить {random.choice(tag_base)}? Вопрос {i}',
                 text=f'Вопрос {i}: как изучить {random.choice(tags).name}?'
             )
             q.tags.set(random.sample(tags, k=random.randint(1, 3)))
@@ -56,6 +57,7 @@ class Command(BaseCommand):
             question = random.choice(questions)
             user = random.choice(users)
             if not QuestionLike.objects.filter(question=question, user=user).exists():
+                is_like = random.choice([True, False]) 
                 QuestionLike.objects.create(question=question, user=user)
                 created_likes += 1
         
