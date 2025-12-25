@@ -1,10 +1,30 @@
-{%extends "base.html" %}
+{% extends 'base.html' %}
 
-{%block title%}один вопрос{%endblock%}
+{% block content %}
+<h2>Вход</h2>
 
-{%block content%}
+{% if form.errors %}
+<div style="color: red;">
+    Неверное имя пользователя или пароль.
+</div>
+{% endif %}
 
-{%include "login_include.html"%}
+<form method="post">
+    {% csrf_token %}
 
-{%endblock%}
+    <div>
+        <label>Логин:</label>
+        {{ form.username }}
+    </div>
+
+    <div>
+        <label>Пароль:</label>
+        {{ form.password }}
+    </div>
+
+    <input type="hidden" name="next" value="{{ request.GET.next }}">
+    <button type="submit">Войти</button>
+</form>
+{% endblock %}
+
 

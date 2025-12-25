@@ -1,9 +1,25 @@
-{%extends "base.html" %}
+{% extends 'base.html' %}
 
-{%block title%}вопрос{%endblock%}
+{% block content %}
+<h2>Задать вопрос</h2>
 
-{%block content%}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
 
-{%include "ask_include.html"%}
+    {% for field in form %}
+    <div>
+        <label>{{ field.label }}:</label>
+        {{ field }}
+        {% if field.help_text %}
+        <small>{{ field.help_text }}</small>
+        {% endif %}
+        {% if field.errors %}
+        <div style="color: red;">{{ field.errors }}</div>
+        {% endif %}
+    </div>
+    {% endfor %}
 
-{%endblock%}
+    <button type="submit">Задать вопрос</button>
+</form>
+{% endblock %}
+

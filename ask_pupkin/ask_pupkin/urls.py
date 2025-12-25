@@ -16,25 +16,24 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.urls import include
 
+from django.conf import settings
+from django.conf.urls.static import static
 
-from app.views import hello_view, bye_view, hello_template_view, base, main_page, hot_questions, tag_questions, one_question, login, signup, create_question, profile
+from app.views import hello_view, bye_view, hello_template_view, base, main_page, hot_questions, tag_questions, one_question, login_view, logout_view, signup_view, create_question, profile_edit_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('hello/', hello_view),
     path('bye/', bye_view),
     path('hello-template/', hello_template_view),
-
     path('base/', base, name='base'),
-
-    path('', main_page, name='main'),
-    path('hot/', hot_questions, name='hot'),
-    path('tag/blablabla/', tag_questions, name='tag'),
-    path('question/35/', one_question, name='question'),
-    path('login/', login, name='login'),
-    path('signup/', signup, name='signup'),
+    path('login/', login_view, name='login'),
+    path('logout/', logout_view, name='logout'),
+    path('signup/', signup_view, name='signup'),
     path('ask/', create_question, name='new_q'),
-    path('profile/', profile, name='profile'),
-]
+    path('profile/', profile_edit_view, name='profile_edit'),
+    path('', include('app.urls')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
