@@ -28,7 +28,7 @@
     <p><a href="/">Главная</a></p>   
     {% if user.is_authenticated %}
         <div class="profile">
-            <div class="avatar"><img src="../static/img/face.jpg"></div>
+            <div class="avatar"><img src="{% static 'img/face.jpg' %}"></div>
             <div class="profile-info">
                 <p>{{ user.username }}! это ты, привет</p>
                 <div class="profile-actions">
@@ -56,27 +56,25 @@
 
 	{%endblock%}
 	</div>
-        <aside>
-            <div class="tags-container">
-                <h3>Popular Tags</h3>
-                <div class="tags">
-                    <a href="#">perl</a>
-                    <a href="#" class="text-red">python</a>
-                    <a href="#">Technopark</a>
-                    <a href="#" class="text-red">Mysql</a>
-                    <a href="#" class="text-green">django</a>
-                </div>
-            </div>
-            <div class="members-container">
-                <h3>Best Members</h3>
-                <div class="members">
-                    <a href="#">person 1</a>
-                    <a href="#">person 2</a>
-                    <a href="#">person 3</a>
-                    <a href="#">person 4</a>
-                </div>
-            </div>
-        </aside>
+<aside>
+    <div class="tags-container">
+        <h3>Popular Tags</h3>
+        <div class="tags">
+            {% for tag in popular_tags %}
+                <a href="/tag/{{ tag.name }}/" class="{% cycle 'text-red' '' 'text-green' '' %}">{{ tag.name }}</a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="members-container">
+        <h3>Best Members</h3>
+        <div class="members">
+            {% for member in best_members %}
+                <a href="/user/{{ member.id }}/">{{ member.username }}</a>
+            {% endfor %}
+        </div>
+    </div>
+</aside>
+
     </main>
     <footer>
         <div class = "info">
