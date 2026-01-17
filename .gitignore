@@ -2,6 +2,10 @@
 build/
 temp-*
 
+*.Identifier
+:Zone.Identifier
+*.Zone.Identifier
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

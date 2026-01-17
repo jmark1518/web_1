@@ -10,4 +10,5 @@ urlpatterns = [
     path('question/<int:question_id>/', views.one_question, name='question'),
     path('api/like_question/', views.like_question, name='like_question'),
     path('api/mark_correct/', views.mark_correct_answer, name='mark_correct'),
+    path('user/<int:user_id>/', views.user_profile, name='user_profile'),
 ]

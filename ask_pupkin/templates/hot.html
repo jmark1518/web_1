@@ -1,10 +1,46 @@
 {%extends "base.html" %}
 
+{% load static %}
+
 {%block title%}листинг вопросов{%endblock%}
 
 {%block content%}
 
-{%include "hot_include.html"%}
+<h2>
+                Hot Questions
+            </h2>
+            <div class="questions-list">
+        {% for question in questions %}
+                <div class="question">
+                    <div class="avatar"><img src="{% static 'img/anon.png' %}"></div>
+                    <div class="like">4<button class="image-button"></button></div>
+                    <div class="text">
+                        <a href="/question/{{ question.id }}/">{{ question.title }}</a>
+                        <p>{{ question.text }} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facere sunt reiciendis iure dolor ex, cumque laborum quibusdam repudiandae distinctio ipsum rem aut. Fuga odio nam assumenda amet. Nam, eaque eos.</p>
+                         <span><a href="/question/{{ question.id }}/">{{ question.answer.count }} answers</a> 
+Tags:
+{% for tag in question.tags.all %}
+    <a href="/tag/{{ tag.name }}/">{{ tag.name }}</a>
+{% endfor %}
+</span>
+
+                        </div>
+                </div>
+        {%endfor%}
+
+
+	<div class = "pagination">
+        {% if questions.has_previous %}
+            <a href="?page={{ questions.previous_page_number }}">  {{ questions.previous_page_number}}<a>
+        {% endif %}
+            <a>{{ questions.number}}<a>
+        {% if questions.has_next %}
+            <a href="?page={{ questions.next_page_number }}">  {{ questions.next_page_number}}<a>
+        {% endif %}
+        </div>
+
+            </div>
+
 
 {%endblock%}
 

@@ -40,10 +40,10 @@ def hot_questions(request):
 
 def tag_questions(request, tag_name):
     questions = Question.objects.filter(tags__name=tag_name)
-    paginator = Paginator(questions, 2)
+    paginator = Paginator(questions, per_page=3)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    return render(request, 'index.html', {'page': page, 'tag_name': tag_name})
+    return render(request, 'index.html', {'questions': page, 'tag_name': tag_name})
 
 def one_question(request, question_id):
     question = get_object_or_404(Question, id=question_id)
@@ -157,7 +157,12 @@ def create_question(request):
     
     return render(request, 'ask.html', {'form': form})
 
-
+def user_profile(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    user_questions = Question.objects.filter(author=user).order_by('-created_at')[:5]
+    user_answers = Answer.objects.filter(author=user).order_by('-created_at')[:5]
+    
+    return render(request, 'profile.html', {'profile_user': user, 'user_questions': user_questions,'user_answers': user_answers,})
 
 
 
